@@ -7,3 +7,4 @@ add this string to make it run everytime the system reboots:
 make sure cron service is running:
 sudo systemctl status cron.service
 sudo systemctl enable cron.service
+esto es una prueba
