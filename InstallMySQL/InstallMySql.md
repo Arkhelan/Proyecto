@@ -56,3 +56,6 @@ Para detener el servidor MySQL:
 <pre><code>sudo apt purge mysql-server-* </code></pre>
 <pre><code>rm -rf /etc/mysql</code></pre> 
 <pre><code>rm -rf /var/lib/mysql </code></pre>
+
+
+### Tras realizar toda la instalacion y creacion de la base de datos alodb como ejercicio de prueba , la eliminaremos para dar paso a la base de datos final del proyecto 
