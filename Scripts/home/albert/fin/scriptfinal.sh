@@ -38,9 +38,16 @@ mover(){
         b=$a
         if [ -d $dir$b ];
         then
-            mkdir $web$b
-            b=$b"/"
-            bash /home/albert/fin/mover.sh $b $web $dir $analy
+            if [ $b == "quarentena" ]
+            then
+                mkdir $web$b
+                b=$b"/"
+                bash /home/albert/fin/mover2.sh $b $web $dir $analy
+            else
+                mkdir $web$b
+                b=$b"/"
+                bash /home/albert/fin/mover.sh $b $web $dir $analy
+            fi
         else
                 md=$(md5sum $dir$b)
                 echo $md >> $direcciones
@@ -132,7 +139,30 @@ if [ $val == "true" ]; then
         done
         if [ $bool == "true" ]
         then
-            mv $analy$i "/home/albert/permitidos"
+         for z in $(cat "/home/albert/scripts/direcciones.txt")
+            do
+                a=$z
+                y=${z:0:32}
+                if [ $acepto == "true" ];
+                then
+                    a=${z:11}
+                    nombre=$web$a
+                    localizacion=${nombre:13}
+                    nombre=${nombre##*/}
+                    cp $analy$i $web$a
+                    acepto=false
+                    rm $analy$i
+                    sudo mysql $SQL_ARGS "INSERT INTO archivos (nombre, direccion, MD5) VALUES ('$nombre', '$localizacion', '$id');"
+                    sudo mysql $SQL_ARGS "exit"
+
+                fi
+                if [ $y == $i ];
+                then
+                    acepto=true
+                    id=$y
+                    #echo $a
+                fi
+            done
         else
             vt_file
             linia=$(sed -n 4p /home/albert/scripts/ids.txt)
@@ -171,7 +201,7 @@ if [ $val == "true" ]; then
                     cp $analy$file $web$a
                     acepto=false
                     rm $analy$file
-                    sudo mysql $SQL_ARGS "INSERT INTO archivos VALUES ('$id', '$nombre', '$localizacion');"
+                    sudo mysql $SQL_ARGS "INSERT INTO archivos (nombre, direccion, MD5) VALUES ('$nombre', '$localizacion', '$id');"
                     sudo mysql $SQL_ARGS "exit"
 
                 fi
@@ -260,4 +290,6 @@ else
     echo "No se localizo ningún archivo en la carpeta" >>$arch2"registro.txt"
 fi
 sudo umount /media/usb
-sudo bash /home/albert/fin/detusb.sh
+
+#Deberias crear un script que determine que el usuario a sacado el usb antes de volver a ejecutar el usb de detección.
+bash /home/albert/fin/detusb.sh

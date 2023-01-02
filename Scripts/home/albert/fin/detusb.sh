@@ -1,8 +1,8 @@
 # !/bin/bash
-echo "el script se ha iniciado" >> /home/albert/fin/registro
+echo "el script se ha iniciado" >> /home/albert/scripts/registro2.txt
 for (( ; ; ));
 do
-    echo "el script ha dado una vuelta" >> /home/albert/fin/registro
+    echo "el script ha dado una vuelta" >> /home/albert/scripts/registro2.txt
     a=0
     sleep 1
     for i in $(ls /dev/sd*)
@@ -25,6 +25,5 @@ do
 done
 mount $a /media/usb
 sudo chmod 777 /media/usb
-#sh /home/albert/fin/scriptfinal.sh
-echo "el script ha finalizado" >> /home/albert/fin/registro
-mount $a /media/usb
+echo "el script ha finalizado" >> /home/albert/scripts/registro2.txt
+sudo bash /home/albert/fin/scriptfinal.sh

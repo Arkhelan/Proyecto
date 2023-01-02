@@ -47,6 +47,6 @@ Comando para NO INICIO AUTOMATICO al arrancar el servidor.
 Comando INICIO AUTOMATICO al arrancar el servidor.
 <pre><code>sudo systemctl enable apache2</code></pre>
 ## Ficheros importantes
-Ver ficheros importantes dentro de Apache:
-- `/var/www/html` 
-Esta es la ruta donde se alojan los ficheros html
+El fichero mas importante a tener en cuenta al administrar un servidor de Apache es:
+<li>/var/www/html</li>
+En este directorio guardaremos todo lo que querramos mostrar en el servidor web.
