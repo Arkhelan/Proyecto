@@ -3,6 +3,9 @@ fin=$1
 carp=$2
 dir=$3
 anali=$4
+SQL_USER="usu"
+SQL_PASSWORD="passwd"
+SQL_DATABASE="usbdb"
 direcciones="/home/albert/scripts/direcciones.txt"
 SQL_ARGS="-h $SQL_HOST -u $SQL_USER -p$SQL_PASSWORD -D $SQL_DATABASE -s -e"
 for a in $(ls -1 $dir$fin)
