@@ -46,7 +46,7 @@ body {
     <?php
     $servername = "localhost";
     $username = "usu";
-    $password = "2003__Albert";
+    $password = "pswd";
     $dbname = "usbdb";
     
     // Create connection
