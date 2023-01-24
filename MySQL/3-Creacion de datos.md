@@ -1,4 +1,4 @@
-# Creación de base de datos y tablas (DISPOSITIVOS)
+# Creación de base de datos (DISPOSITIVOS)
 ### Una vez hayamos acabado la instalación de MySQL, procederemos a crear las base de datos y de las tablas.
 Previamente habremos creado un usuario adminitrador: almanDB
 ### Iniciamos el servicio de MySQL
