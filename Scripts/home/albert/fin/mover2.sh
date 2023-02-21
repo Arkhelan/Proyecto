@@ -1,11 +1,13 @@
 #! /bin/bash
 fin=$1
+SQL_HOST=localhost
+SQL_USER="usu"
+SQL_PASSWORD="2003__Albert"
+SQL_DATABASE="usbdb"
 carp=$2
 dir=$3
 anali=$4
-SQL_USER="usu"
-SQL_PASSWORD="passwd"
-SQL_DATABASE="usbdb"
+usb=$5
 direcciones="/home/albert/scripts/direcciones.txt"
 SQL_ARGS="-h $SQL_HOST -u $SQL_USER -p$SQL_PASSWORD -D $SQL_DATABASE -s -e"
 for a in $(ls -1 $dir$fin)
@@ -23,9 +25,8 @@ do
 		localizacion=$carp$fin$b
 		nombre=$b
 		id=$(md5sum $dir$fin$b)
-		sudo mysql $SQL_ARGS "INSERT INTO archivos (nombre, direccion, MD5) VALUES ('$nombre', '$localizacion', '$id');"
+		sudo mysql $SQL_ARGS "INSERT INTO archivos (nombre, direccion, MD5, usb) VALUES ('$nombre', '$localizacion', '$id', '$usb');"
         sudo mysql $SQL_ARGS "exit"
 		echo "El archivo "$nombre" con hash "$id" puede pasar directamente por estar en la carpeta quarentena, puede ser peligroso">>"/home/albert/scripts/registro.txt"
 	fi
 done
-

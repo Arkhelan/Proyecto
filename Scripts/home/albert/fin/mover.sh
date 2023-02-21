@@ -3,6 +3,7 @@ fin=$1
 carp=$2
 dir=$3
 anali=$4
+usb=$5
 direcciones="/home/albert/scripts/direcciones.txt"
 for a in $(ls -1 $dir$fin)
 do
@@ -13,7 +14,7 @@ do
 		then
 			mkdir $web$b
             b=$b"/"
-            bash /home/albert/fin/mover2.sh $b $web $dir $analy
+            bash /home/albert/fin/mover2.sh $b $web $dir $analy $usb
 		else
 		next=""
 		next=$fin$b"/"

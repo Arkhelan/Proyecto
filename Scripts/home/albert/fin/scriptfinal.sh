@@ -42,11 +42,11 @@ mover(){
             then
                 mkdir $web$b
                 b=$b"/"
-                bash /home/albert/fin/mover2.sh $b $web $dir $analy
+                bash /home/albert/fin/mover2.sh $b $web $dir $analy $usb
             else
                 mkdir $web$b
                 b=$b"/"
-                bash /home/albert/fin/mover.sh $b $web $dir $analy
+                bash /home/albert/fin/mover.sh $b $web $dir $analy $usb
             fi
         else
                 md=$(md5sum $dir$b)
@@ -100,6 +100,7 @@ vt_analysis() {
 }
 api="baf43aeebb9d8efc8bca0db186a65bc70950ac13e94079e04770b71ddfa119ce"
 medio="/media/usb/"
+usb=$1
 scripts="/home/albert/fin/"
 arch3="/home/albert/analysis/"
 arch2="/home/albert/scripts/"
@@ -152,7 +153,7 @@ if [ $val == "true" ]; then
                     cp $analy$i $web$a
                     acepto=false
                     rm $analy$i
-                    sudo mysql $SQL_ARGS "INSERT INTO archivos (nombre, direccion, MD5) VALUES ('$nombre', '$localizacion', '$id');"
+                    sudo mysql $SQL_ARGS "INSERT INTO archivos (nombre, direccion, MD5, usb) VALUES ('$nombre', '$localizacion', '$id', '$usb');"
                     sudo mysql $SQL_ARGS "exit"
 
                 fi
@@ -201,7 +202,7 @@ if [ $val == "true" ]; then
                     cp $analy$file $web$a
                     acepto=false
                     rm $analy$file
-                    sudo mysql $SQL_ARGS "INSERT INTO archivos (nombre, direccion, MD5) VALUES ('$nombre', '$localizacion', '$id');"
+                    sudo mysql $SQL_ARGS "INSERT INTO archivos (nombre, direccion, MD5, usb) VALUES ('$nombre', '$localizacion', '$id', '$usb');"
                     sudo mysql $SQL_ARGS "exit"
 
                 fi
@@ -291,5 +292,4 @@ else
 fi
 sudo umount /media/usb
 
-#Deberias crear un script que determine que el usuario a sacado el usb antes de volver a ejecutar el usb de detección.
 bash /home/albert/fin/detusb.sh
