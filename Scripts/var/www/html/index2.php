@@ -90,7 +90,7 @@ if ($_SESSION['user'] == 2){
     $dbname = "usbdb";
     
     $usuario = $_SESSION['user'];
-    echo $usuario;
+    
     // Create connection
     $conn = new mysqli($servername, $username, $password, $dbname);
     // Check connection
