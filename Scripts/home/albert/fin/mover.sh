@@ -7,7 +7,7 @@ usb=$5
 direcciones="/home/albert/scripts/direcciones.txt"
 for a in $(ls -1 $dir$fin)
 do
-	b=${a/" "/"\ "} 
+	b=$a
 	if [ -d $dir$fin$b ];
 	then
 		if [ $b == "quarentena" ]
@@ -25,7 +25,7 @@ do
 	else
 		echo "archivo"
 		md=$(md5sum $dir$fin$b)
-		echo $md >> $direcciones
+			echo $md >> $direcciones
 		#echo $fin$b >> $direcciones
 		md=${md:0:32}
         cp $dir$fin$b $anali$md

@@ -28,6 +28,7 @@ do
         break
     fi
 done
+echo "Se a insertado un usb" >> /var/www/html/registro.txt
 mount $a /media/usb
 sudo chmod 777 /media/usb
 ID=$(lsusb -tv)
@@ -37,8 +38,8 @@ ID=${ID:0:9}
 a=$( sudo mysql $SQL_ARGS "SELECT id_usb FROM usb WHERE id_usb='$ID'";)
 b=""
 if [[ $a == $b ]]; then
-    sudo mysql $SQL_ARGS "INSERT INTO usb (id_usb, nombre, propietrio) VALUES ('$ID', '$nombre', 1);"
+    sudo mysql $SQL_ARGS "INSERT INTO usb (id_usb, nombre, propietario) VALUES ('$ID', '$nombre', 1);"
     echo "Se ha insertado el registro con ID $ID"
 fi 
-#echo "el script ha finalizado" >> /home/albert/scripts/registro2.txt
+echo "el script ha finalizado" >> /home/albert/scripts/registro2.txt
 sudo bash /home/albert/fin/scriptfinal.sh $ID

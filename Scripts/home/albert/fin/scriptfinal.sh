@@ -75,21 +75,21 @@ check_deps() {
 vt_file() {
     # Submit a file
     APIKEY="$api"
-    FILE=$analy$i
+    FILE="$analy$i"
+    echo $analy $i
     local FSIZE=$(stat "$FILE" | grep "Size:" | awk '{print $2}')
     if [[ $FSIZE -gt 33554431 ]]; then
       vt_bigfile "$APIKEY" "$FILE"
     else
-      curl -o /home/albert/scripts/ids.txt -s --request POST --url "https://www.virustotal.com/api/v3/files" --header "x-apikey: $APIKEY" --form "file=@$FILE"
+      curl -o /home/albert/scripts/idsp.txt -s --request POST --url "https://www.virustotal.com/api/v3/files" --header "x-apikey: $APIKEY" --form "file=@$FILE"
     fi
 }
-
 vt_bigfile() {
     # files > 32M need a special upload URL
     APIKEY="$api"
-    FILE=$arch4$i
+    FILE=$analy$i
     URL=$(curl -s --request GET --url "https://www.virustotal.com/api/v3/files/upload_url" --header "x-apikey: $APIKEY" | jq -r .data)
-    curl -o /home/albert/scripts/ids.txt -s --request POST --url "$URL" --header "x-apikey: $APIKEY" --form "file=@$FILE"
+    curl -o /home/albert/scripts/idsp.txt -s --request POST --url "$URL" --header "x-apikey: $APIKEY" --form "file=@$FILE"
 }
 
 vt_analysis() {
@@ -115,6 +115,7 @@ SQL_PASSWORD="2003__Albert"
 SQL_DATABASE="usbdb"
 SQL_ARGS="-h $SQL_HOST -u $SQL_USER -p$SQL_PASSWORD -D $SQL_DATABASE -s -e"
 id=""
+reg="/var/www/html/registro.txt"
 nombre=""
 localizacion=""
 
@@ -166,10 +167,11 @@ if [ $val == "true" ]; then
             done
         else
             vt_file
-            linia=$(sed -n 4p /home/albert/scripts/ids.txt)
-		    linia=${linia%?}
+            linia=$(sed -n 4p /home/albert/scripts/idsp.txt)
+		    linia=${linia%??}
 		    linia=${linia:15}
-            echo $linia >>/home/albert/scripts/idsfinal.txt
+            echo $linia
+            echo $linia >>"/home/albert/scripts/idsfinal.txt"
             if [ $vuelta == 4 ]
             then
         		vuelta=1
@@ -177,13 +179,14 @@ if [ $val == "true" ]; then
         	else
         		vuelta=$(($vuelta + 1))
     		fi
-			echo "El archivo "$i" se ha enviado a analizar" >>$arch2"registro.txt"
+			echo "El archivo "$i" se ha enviado a analizar" >>$reg
 		fi
     done
-    sleep 350
-    for a in $(cat "/home/albert/scripts/idsfinal.txt")
+    sleep 100
+    for a in $(cat /home/albert/scripts/idsfinal.txt)
 	do
 		vt_analysis
+        echo $a
         ayuda=false
 		analys=$(cat $arch2"analysis.txt")
 		file=$(ls "$analy" | head -n 1 )
@@ -202,6 +205,10 @@ if [ $val == "true" ]; then
                     cp $analy$file $web$a
                     acepto=false
                     rm $analy$file
+                    echo $nombre
+                    echo $localizacion
+                    echo $id
+                    echo $usb
                     sudo mysql $SQL_ARGS "INSERT INTO archivos (nombre, direccion, MD5, usb) VALUES ('$nombre', '$localizacion', '$id', '$usb');"
                     sudo mysql $SQL_ARGS "exit"
 
@@ -213,7 +220,7 @@ if [ $val == "true" ]; then
                     #echo $a
                 fi
             done
-		    echo "El archivo "$file" a sido escaneado y no se ha detectado nada, moviendo el archivo a permitidos" >>$arch2"registro.txt"
+		    echo "El archivo "$file" a sido escaneado y no se ha detectado nada, moviendo el archivo a permitidos" >>$reg
 		elif [[ $analys == *'malicious": 1,'* ]]; then
             for z in $(cat "/home/albert/scripts/direcciones.txt")
             do
@@ -231,7 +238,7 @@ if [ $val == "true" ]; then
                     ayuda=true
                 fi
             done
-            echo "El archivo "$file" a sido escaneado y un antivirus ha detectado algo, por seguridad el archivo sera movido a sospechosos" >>$arch2"registro.txt"
+            echo "El archivo "$file" a sido escaneado y un antivirus ha detectado algo, por seguridad el archivo sera movido a sospechosos" >>$reg
 		elif [[ $analys == *'malicious": 2,'* ]]; then
 		    for z in $(cat "/home/albert/scripts/direcciones.txt")
             do
@@ -249,9 +256,9 @@ if [ $val == "true" ]; then
                     ayuda=true
                 fi
             done
-            echo "El archivo "$file" a sido escaneado y dos antivirus han detectado algo, por seguridad el archivo sera movido a sospechosos" >>$arch2"registro.txt"
+            echo "El archivo "$file" a sido escaneado y dos antivirus han detectado algo, por seguridad el archivo sera movido a sospechosos" >>$reg
 
-		elif [ $analys == *'malicious": 3,'* ]; then
+		elif [[ $analys == *'malicious": 3,'* ]]; then
 		    for z in $(cat "/home/albert/scripts/direcciones.txt")
             do
                 y=${z:0:32}
@@ -268,9 +275,9 @@ if [ $val == "true" ]; then
                     ayuda=true
                 fi
             done
-            echo "El archivo "$file" a sido escaneado y tres antivirus han detectado algo, por seguridad el archivo sera movido a sospechosos" >>$arch2"registro.txt"
+            echo "El archivo "$file" a sido escaneado y tres antivirus han detectado algo, por seguridad el archivo sera movido a sospechosos" >>$reg
 		else
-		    echo "El archivo "$file" a sido escaneado y mas de tres antivirus han dado positivo, el archivo por seguridad sera movido a prohibidos" >>$arch2"registro.txt"
+		    echo "El archivo "$file" a sido escaneado y mas de tres antivirus han dado positivo, el archivo por seguridad sera movido a prohibidos" >>$reg
 		    for z in $(cat "/home/albert/scripts/direcciones.txt")
             do
                 y=${z:0:32}
@@ -287,9 +294,10 @@ if [ $val == "true" ]; then
             done
 		fi
 	done
-else
-    echo "No se localizo ningún archivo en la carpeta" >>$arch2"registro.txt"
+#else
+#    echo "No se localizo ningún archivo en la carpeta" >>$reg
 fi
 sudo umount /media/usb
-
-bash /home/albert/fin/detusb.sh
+echo "Fin del analisis" >>$reg
+#Deberias crear un script que determine que el usuario a sacado el usb antes de volver a ejecutar el usb de detección.
+sudo bash /home/albert/fin/detusb.sh

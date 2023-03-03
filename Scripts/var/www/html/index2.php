@@ -81,7 +81,8 @@ if ($_SESSION['user'] == 2){
 	echo "<a href='administración.php'>Administración</a> ";
 }
 ?>
-</div>    
+</div>   
+<div> 
     <?php
     $servername = "localhost";
     $username = "usu";
@@ -89,6 +90,7 @@ if ($_SESSION['user'] == 2){
     $dbname = "usbdb";
     
     $usuario = $_SESSION['user'];
+    echo $usuario;
     // Create connection
     $conn = new mysqli($servername, $username, $password, $dbname);
     // Check connection
@@ -96,20 +98,22 @@ if ($_SESSION['user'] == 2){
         die("Connection failed: " . $conn->connect_error);
     } 
     
-    $sql = "SELECT ID, nombre, direccion, MD5 FROM archivos WHERE usb = (SELECT id_usb FROM usb WHERE propietario = (SELECT id_usu FROM usuarios WHERE id_usu = '$usuario')) OR usb = (SELECT id_usb FROM usb WHERE grupo = (SELECT id_gr FROM ubic WHERE id_usu = '$usuario'))";
+    $sql = "SELECT ID, nombre, direccion, MD5 FROM archivos WHERE usb IN (SELECT id_usb FROM usb WHERE propietario = (SELECT id_usu FROM usuarios WHERE id_usu = '$usuario')) OR usb IN (SELECT id_usb FROM usb WHERE grupo = (SELECT id_gr FROM ubic WHERE id_usu = '$usuario'))";
+    
     $result = $conn->query($sql);
     
     if ($result->num_rows > 0) {
         echo "<table><tr><th>Nombre</th><th>Link Descarga</th></tr>";
         // output data of each row
-        while($row = $result->fetch_assoc()) {
-            echo "<tr><td>".$row["nombre"]."</td><td><a href=".$row["direccion"]." download>Descargar</td></tr>";
-        }
+        foreach($result as $row) {
+          echo "<tr><td>".$row['nombre']."</td><td><a href=".$row['direccion']." download>Descargar</td></tr>";
+      }
         echo "</table>";
     } else {
         echo "0 results";
     }
     $conn->close();
     ?>
+    </div>
 </body>
 </html>
