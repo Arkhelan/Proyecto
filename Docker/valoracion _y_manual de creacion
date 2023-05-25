@@ -1,0 +1,13 @@
+Instalación de Docker:
+   - Descargar e instalar Docker en tu entorno de trabajo principal. 
+2. Creación de un contenedor:
+   - Creación un archivo Dockerfile en el que se especifica el entorno de trabajo que necesario para el análisis de software malicioso.
+   - Definir las dependencias y herramientas necesarias en el Dockerfile.
+   - Construir la imagen ejecutando el comando `docker build` en el directorio que contiene el Dockerfile.
+3. Configuración del entorno aislado:
+   - Con la creación de un contenedor a partir de la imagen construida.
+   - Dentro del contenedor, configurar el sistema operativo y las herramientas necesarias para el análisis de software malicioso.
+4. Conexión de dispositivos USB:
+   - Conecta los dispositivos USB al host.
+5. Acceso al contenedor:
+   - Accede al contenedor de Docker utilizando el comando `docker exec` desde terminal host
