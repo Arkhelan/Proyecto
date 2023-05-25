@@ -1,35 +1,26 @@
 #! /bin/bash
-fin=$1
 SQL_HOST=localhost
 SQL_USER="usu"
 SQL_PASSWORD="2003__Albert"
 SQL_DATABASE="usbdb"
-carp=$2
-dir=$3
-anali=$4
-usb=$5
-direcciones="/home/albert/scripts/direcciones.txt"
 SQL_ARGS="-h $SQL_HOST -u $SQL_USER -p$SQL_PASSWORD -D $SQL_DATABASE -s -e"
-for a in $(ls -1 $dir$fin)
+for a in $1/*
 do
-	b=$a 
-	if [ -d $dir$fin$b ];
-	then
-		next=""
-		next=$fin$b"/"
-		echo "directorio"
-        mkdir $carp$next
-		bash /home/albert/fin/mover2.sh $next $carp $dir $anali
-	else
-        cp $dir$fin$a $carp$fin$b
-		localizacion=$carp$fin$b
-		nombre=$b
-		echo "vino"
-		id=$(md5sum $dir$fin$b)
-		id=${id:0:32}
-		sudo mysql $SQL_ARGS "INSERT INTO archivos (nombre, direccion, MD5, usb) VALUES ('$nombre', '$localizacion', '$id', '$usb');"
+    b="'$a'"
+    if [ -d $b ];
+    then
+        c=${b:10}
+        weba=${2}${c}
+        mkdir "$weba"
+        bash /home/ubuntu/fin/pruebas/mover2.sh $b $2 $3 $4 $5 $6
+    else
+        c=${b:10}
+        cp $b $2$c
+        id=$(md5sum $b)
+        id=${id:0:32}
+        nombre=${c##*/}
+        sudo mysql $SQL_ARGS "INSERT INTO archivos (nombre, direccion, MD5, usb, idanaly, estado) VALUES ('$nombre', '$2$c', '$id', '$4', '$6', '6');"
         sudo mysql $SQL_ARGS "exit"
-		echo "El archivo "$nombre" con hash "$id" puede pasar directamente por estar en la carpeta quarentena, puede ser peligroso">>"/var/wwww/html/registro.txt"
-	fi
+        echo "El archivo "$nombre" con hash "$id" puede pasar directamente por estar en la carpeta quarentena, puede ser peligroso">>"/var/wwww/html/registro.txt"
+    fi
 done
-

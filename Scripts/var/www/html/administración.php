@@ -1,17 +1,18 @@
 <?php
 session_start();
-
-if (isset($_POST['logout'])) {
-    unset($_SESSION['user']);
+if (!isset($_SESSION['user'])) {
+    header('Location: inicio.php');
+    exit;
+}
+if ($_SESSION['user'] != 2) {
     header('Location: index.php');
     exit;
 }
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body {
   margin: 0;
@@ -146,14 +147,20 @@ body {
     echo "<a href='adminfichero.php'> Archivos dudosos</a>";
   }
   ?>
+</div> 
+
 </div>
-<div style="padding-left:16px">
-  <h2>Qué hacemos?</h2>
-  <p>Nosotros proporcionamos un software de detección de amenazas para prevenir la infección de los sistemas de una empresa a través de ficheros que los empleados traigan en una memoria portátil.</p>
-</div>
-<div style="padding-left:16px">
-  <h2>Cómo funciona?</h2>
-  <p>Para poder analizar una memoria portátil, deberás dirigirte al servidor, introducir el pendrive en la máquina, y este copiará todos los archivos para analizarlos utilizando la API de Virus Total. Cuando termine el registro de los ficheros, los que no sean considerados una amenaza estarán disponibles en nuestro servidor web.</p>
-</div>
+<h2>Contenido del archivo .txt:</h2>
+
+
+<?php
+$miarchivo = fopen("registro.txt", "r") or die("Unable to open file!");
+// Imprime un loop hasta que todos los elementos del archivo sean impresos
+while(!feof($miarchivo)) {
+  echo fgets($miarchivo) . "<br>";
+}
+fclose($miarchivo);
+?>
+
 </body>
 </html>

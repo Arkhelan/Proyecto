@@ -1,17 +1,14 @@
 <?php
 session_start();
 
-if (isset($_POST['logout'])) {
-    unset($_SESSION['user']);
-    header('Location: index.php');
+if (!isset($_SESSION['user'])) {
+    header('Location: inicio.php');
     exit;
 }
 ?>
-
-<!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body {
   margin: 0;
@@ -146,14 +143,46 @@ body {
     echo "<a href='adminfichero.php'> Archivos dudosos</a>";
   }
   ?>
-</div>
-<div style="padding-left:16px">
-  <h2>Qué hacemos?</h2>
-  <p>Nosotros proporcionamos un software de detección de amenazas para prevenir la infección de los sistemas de una empresa a través de ficheros que los empleados traigan en una memoria portátil.</p>
-</div>
-<div style="padding-left:16px">
-  <h2>Cómo funciona?</h2>
-  <p>Para poder analizar una memoria portátil, deberás dirigirte al servidor, introducir el pendrive en la máquina, y este copiará todos los archivos para analizarlos utilizando la API de Virus Total. Cuando termine el registro de los ficheros, los que no sean considerados una amenaza estarán disponibles en nuestro servidor web.</p>
-</div>
+</div>   
+<div> 
+    <?php
+    $servername = "localhost";
+    $username = "usu";
+    $password = "2003__Albert";
+    $dbname = "usbdb";
+    
+    $usuario = $_SESSION['user'];
+    
+    // Create connection
+    $conn = new mysqli($servername, $username, $password, $dbname);
+    // Check connection
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    } 
+    
+    $sql = "SELECT DISTINCT ID, nombre, direccion, MD5 FROM archivos WHERE ID IN (SELECT idarch FROM comp WHERE idusu = '$usuario') AND estado NOT IN (3) AND estado NOT IN (5)";
+    
+    $result = $conn->query($sql);
+    
+
+    if ($result->num_rows > 0) {
+//	$link = $row["direccion"];
+    //	$link = str_replace(" ", "%20", $link_db);
+        echo "<table><tr><th>Nombre</th><th>Link Descarga</th></tr>";
+        // output data of each row
+      //  foreach($result as $row) {
+     //     echo "<tr><td>".$row['nombre']."</td><td><a href="$link" download>Descargar</td></tr>";
+      	foreach($result as $row) {
+        $link = $row["direccion"];
+        $link = str_replace(" ", "%20", $link);
+        echo "<tr><td>".$row['nombre']."</td><td><a href='".$link."'>Descargar</a></td></tr>";
+    }
+        echo "</table>";
+    } else {
+        echo "0 results";
+    }
+    $conn->close();
+    ?>
+    </div>
 </body>
 </html>

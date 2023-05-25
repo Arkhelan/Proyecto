@@ -11,12 +11,9 @@ do
     a=0
     sleep 1
     for i in $(ls /dev/sd*)
-	    do
-            if [ $i != "/dev/sda" ] && [ $i != "/dev/sda1" ] && [ $i != "/dev/sda2" ] && [ $i != "/dev/sda3" ];
-                then
-                    a=$(echo $i)
-                fi
-	    done
+	do
+        a=$(echo $i)
+	done
     if [ $a != "0" ];
     then
         b=${a:-1}
@@ -29,17 +26,29 @@ do
     fi
 done
 echo "Se a insertado un usb" >> /var/www/html/registro.txt
-mount $a /media/usb
+sudo mount $a /media/usb
 sudo chmod 777 /media/usb
-ID=$(lsusb -tv)
+ID=$(lsusb | awk 'NR==2')
 ID=${ID##*"ID "}
 nombre=${ID:10}
 ID=${ID:0:9}
-a=$( sudo mysql $SQL_ARGS "SELECT id_usb FROM usb WHERE id_usb='$ID'";)
+echo $ID
+echo $nombre
+if [ $ID == "1d6b:0003" ]; then
+    echo "no esta aqui"
+    ID=$(lsusb | awk 'NR==3')
+    ID=${ID##*"ID "}
+    nombre=${ID:10}
+    ID=${ID:0:9}
+    echo $ID
+    echo $nombre
+fi
+c=$( sudo mysql $SQL_ARGS "SELECT id_usb FROM usb WHERE id_usb='$ID'";)
 b=""
-if [[ $a == $b ]]; then
+if [[ $c == $b ]]; then
     sudo mysql $SQL_ARGS "INSERT INTO usb (id_usb, nombre, propietario) VALUES ('$ID', '$nombre', 1);"
     echo "Se ha insertado el registro con ID $ID"
 fi 
-echo "el script ha finalizado" >> /home/albert/scripts/registro2.txt
-sudo bash /home/albert/fin/scriptfinal.sh $ID
+echo "acabe"
+#echo "el script ha finalizado" >> /home/albert/scripts/registro2.txt
+sudo bash /home/ubuntu/fin/scriptf.sh $ID $a
